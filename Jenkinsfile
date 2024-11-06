@@ -1,19 +1,32 @@
 pipeline {
     agent any
-    tools {nodejs "NodeJS18.20.4"}
+
     stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/your-username/your-repo.git'
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'npm install'
+                sh 'npm run build'
             }
         }
-        stage('Deliver') {
+
+        stage('Test') {
             steps {
-                sh 'chmod -R +rwx ./jenkins/scripts/deliver.sh'
-                sh 'chmod -R +rwx ./jenkins/scripts/kill.sh'
-                sh './jenkins/scripts/deliver.sh'
-                input message: 'Finished using the web site? (Click "Proceed" to continue)'
-                sh './jenkins/scripts/kill.sh'
+                sh 'npm test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // Replace with your deployment steps, such as:
+                // Deploying to a server using SSH or a deployment tool
+                // Deploying to a cloud platform like AWS, GCP, or Azure
+                sh 'ssh user@host "cd /path/to/deploy && git pull"'
             }
         }
     }
