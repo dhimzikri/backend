@@ -21,24 +21,20 @@
 
 pipeline {
     agent any
-
+    tools {nodejs "NodeJS18.20.4"}
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'master', url: 'https://github.com/dhimzikri/backend.git'
-            }
-        }
-
         stage('Build') {
             steps {
                 sh 'npm install'
-                sh 'npm run build'
             }
         }
-
-        stage('Test') {
+        stage('Deliver') {
             steps {
-                sh 'npm test'
+                sh 'chmod -R +rwx ./jenkins/scripts/deliver.sh'
+                // sh 'chmod -R +rwx ./jenkins/scripts/kill.sh'
+                sh './jenkins/scripts/deliver.sh'
+                // input message: 'Finished using the web site? (Click "Proceed" to continue)'
+                // sh './jenkins/scripts/kill.sh'
             }
         }
     }
